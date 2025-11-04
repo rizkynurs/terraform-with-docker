@@ -13,9 +13,9 @@ Provision GCP infrastructure (VPC, subnet, firewall, e2-micro VM on Ubuntu 22.04
 
 ## Prerequisites
 - **Terraform** >= 1.6.0
-- **gcloud CLI** authenticated to your GCP account (`gcloud auth application-default login` recommended)
+- **gcloud CLI** authenticated to your GCP account (`gcloud auth application-default login` or `gcloud auth login --no-launch-browser`)
 - A **GCP project** with billing enabled
-- An **SSH public key** to allow SSH into the VM
+- A **SSH public key** to allow SSH into the VM
 
 ---
 
@@ -28,7 +28,7 @@ Provision GCP infrastructure (VPC, subnet, firewall, e2-micro VM on Ubuntu 22.04
    gcloud config set compute/zone asia-southeast2-a
    ```
 
-2. Create this file in `terraform/terraform.tfvars`, specify values:
+2. Create this file `terraform/terraform.tfvars` if not existed, specify values:
    ```hcl
    project_id     = "<YOUR_PROJECT_ID>"
    region         = "asia-southeast2"
