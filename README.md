@@ -44,11 +44,12 @@ Provision GCP infrastructure (VPC, subnet, firewall, e2-micro VM on Ubuntu 22.04
 cd terraform
 terraform init
 terraform plan -out tfplan
+terraform show tfplan
 terraform apply tfplan
 ```
 
 When complete, Terraform will output:
-- `instance_public_ip`
+- `instance_external_ip`
 - `wordpress_url`
 
 Visit the `wordpress_url` in your browser.
@@ -64,7 +65,7 @@ Visit the `wordpress_url` in your browser.
   ```bash
   ssh ubuntu@<PUBLIC_IP>
   sudo docker ps
-  sudo docker compose -f /opt/wordpress/docker-compose.yml --env-file /opt/wordpress/.env ps
+  sudo docker compose -f /opt/app/docker-compose.yml --env-file /opt/app/.env ps
   curl -I http://localhost:8080
   ```
 
