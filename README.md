@@ -5,15 +5,43 @@ Provision GCP infrastructure (VPC, subnet, firewall, e2-micro VM on Ubuntu 22.04
 ## Architecture
 - **VPC** with a **public subnet**
 - **Firewall** rules: TCP 22 (SSH) and TCP 8080 (app) open to 0.0.0.0/0
-- **Compute Engine**: `e2-micro` (free-tier eligible), Ubuntu 22.04 LTS
+- **Compute Engine**: `e2-micro`, with OS Ubuntu 22.04 LTS
 - **Startup Script** installs Docker & Compose, writes `docker-compose.yml` and `.env`, and runs `docker compose up -d`
 - **WordPress** reachable at `http://<VM_PUBLIC_IP>:8080`
 
 ---
 
+## Structures
+```
+/terraform-with-docker
+├── terraform
+├───── modules
+├──────── compute
+├─────────── scripts
+├─────────────── startup.sh.tftpl
+├─────────── main.tf
+├─────────── outputs.tf
+├─────────── variables.tf
+├──────── network
+├─────────── main.tf
+├─────────── outputs.tf
+├─────────── variables.tf
+├───── main.tf
+├───── outputs.tf
+├───── variables.tf
+├───── version.tf
+├── app
+├───── docker-compose.yml
+├───── .env.example # Example environment file for docker-compose
+├── .gitignore
+└── README.md
+```
+
+---
+
 ## Prerequisites
 - **Terraform** >= 1.6.0
-- **gcloud CLI** authenticated to your GCP account (`gcloud auth application-default login` or `gcloud auth login --no-launch-browser`)
+- **gcloud CLI** authenticated to your GCP account (`gcloud auth application-default login` or `gcloud auth application-default --no-launch-browser`)
 - A **GCP project** with billing enabled
 - A **SSH public key** to allow SSH into the VM
 

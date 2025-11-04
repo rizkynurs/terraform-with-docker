@@ -3,6 +3,7 @@
 terraform.tfstate
 terraform.tfstate.backup
 *.tfvars
+*tfplan*
 
 app/.env
 app/wp_data/
