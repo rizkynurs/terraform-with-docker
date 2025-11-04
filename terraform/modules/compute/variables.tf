@@ -1,0 +1,9 @@
+variable "instance_name"        { type = string }
+variable "machine_type"         { type = string }
+variable "zone"                 { type = string }
+variable "ubuntu_image_family"  { type = string }
+variable "ubuntu_image_project" { type = string }
+variable "network_self_link"    { type = string }
+variable "subnet_self_link"     { type = string }
+variable "ssh_username"         { type = string }
+variable "ssh_public_key"       { type = string }

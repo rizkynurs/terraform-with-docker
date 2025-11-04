@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euxo pipefail
+exec > >(tee /var/log/startup-script.log | logger -t startup-script) 2>&1
+
+sudo timedatectl set-timezone Asia/Jakarta
+# Add Docker's official GPG key:
+apt-get update
+apt-get install -y ca-certificates curl gnupg lsb-release apt-transport-https openssl
+
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
+
+# Add the repository to Apt sources:
+ARCH="$(dpkg --print-architecture)"
+. /etc/os-release
+echo "deb [arch=$${ARCH} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $${VERSION_CODENAME} stable" \
+  | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+apt-get update
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo usermod -aG docker ubuntu
+
+systemctl enable docker
+systemctl start docker
+
+mkdir -p /opt/app
+cd /opt/app
+
+# Write docker-compose.yml from the repo content
+cat > docker-compose.yml <<'YAML'
+${docker_compose}
+YAML
+
+# Write .env.example from the repo content
+cat > .env.example <<'ENVX'
+${env_example}
+ENVX
+
+# If .env doesn't exist, copy from .env.example
+if [ ! -f .env ]; then
+  cp .env.example .env
+  # Harden defaults if still using 'change-me' placeholders
+  if grep -q '^MYSQL_PASSWORD=change-me$' .env; then
+    sed -i "s/^MYSQL_PASSWORD=.*/MYSQL_PASSWORD=$(openssl rand -hex 16)/" .env
+  fi
+  if grep -q '^MYSQL_ROOT_PASSWORD=change-me-root$' .env; then
+    sed -i "s/^MYSQL_ROOT_PASSWORD=.*/MYSQL_ROOT_PASSWORD=$(openssl rand -hex 20)/" .env
+  fi
+fi
+
+docker compose up -d
+docker ps
